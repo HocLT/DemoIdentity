@@ -1,0 +1,44 @@
+﻿@page
+@model DemoIdentity.Areas.Identity.Pages.RoleClaims.IndexModel
+
+@{ ViewData["Title"] = "Claim for:" + Model.role.Name; }
+
+<h1>Role: @Model.role.Name</h1>
+
+<p>
+    <a asp-page="Create" asp-route-roleid="@Model.role.Id">Add Claim</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>
+                @Html.DisplayNameFor(model => model.claims[0].ClaimType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.claims[0].ClaimValue)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.claims)
+        {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Id)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ClaimType)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ClaimValue)
+    </td>
+    <td>
+        <a asp-page="./Edit" asp-route-roleid="@Model.role.Id" asp-route-id="@item.Id">Edit</a> |
+        <a asp-page="./Delete" asp-route-roleid="@Model.role.Id" asp-route-id="@item.Id">Delete</a>
+    </td>
+</tr>}
+    </tbody>
+</table>
+<a asp-area="Identity" asp-page="/Role/Index">ROLES List</a>

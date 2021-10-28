@@ -1,0 +1,48 @@
+﻿@page
+@model DemoIdentity.Areas.Identity.Pages.Role.IndexModel
+
+<h1>Role List</h1>
+<partial name="_StatusMessage" model="@Model.StatusMessage" />
+
+<form method="post" class="my-1 d-inline">
+    <button class="btn btn-secondary" asp-page="./Add" asp-page-handler="StartNewRole">Create New</button>
+</form>
+<a class="btn btn-secondary" asp-page="./User">Assign roles to user</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Role ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.roles)
+        {
+        <tr>
+            <td>@r.Id</td>
+            <td>@r.Name</td>
+            <td>
+                <form method="POST" class="d-inline">
+                    <button name="Input.ID" value="@r.Id" class="btn btn-success btn-sm"
+                            asp-page="./Add" asp-page-handler="StartUpdate">
+                        Cập nhật Role
+                    </button>
+                </form>
+
+                <a name="rolename" class="btn btn-success btn-sm"
+                   asp-route-roleid="@r.Id"
+                   asp-area="Identity"
+                   asp-page="/RoleClaims/Index">Claims</a>
+
+                <form method="POST" class="d-inline">
+                    <button name="Input.ID" value="@r.Id" class="btn btn-success btn-sm"
+                            asp-page="./Delete">
+                        Xóa Role
+                    </button>
+                </form>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
