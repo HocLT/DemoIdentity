@@ -10,6 +10,9 @@ namespace DemoIdentity.Data
 {
     public class AppDbContext: IdentityDbContext<AppUser>
     {
+        public DbSet<Category> Categories { set; get; }
+        public DbSet<Post> Posts { set; get; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // phần này sẽ xử lý việc loại bỏ tiền tố AspNet của bảng được sinh ra
