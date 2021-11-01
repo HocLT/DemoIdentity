@@ -45,10 +45,56 @@ namespace DemoIdentity.Controllers
             return View(post);
         }
 
-        // GET: Post/Create
-        public IActionResult Create()
+        // change title category 
+        // thêm khoảng trắng đầu có các note con
+        private void ChangeTitle(List<Category> cates, int level, List<Category> result)
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title");
+            // chuỗi chứa số dấu "-" theo level 
+            string prefix = string.Concat(Enumerable.Repeat("-", level));
+            foreach (var item in cates)
+            {
+                item.Title = $"{prefix} {item.Title}";  // tạo title
+                result.Add(item);
+                if (item.CategoryChildren != null && item.CategoryChildren.Count > 0)
+                {
+                    // gọi đệ qui hàm ChangeTitle() để xử lý tiếp cho mục con
+                    ChangeTitle(item.CategoryChildren.ToList(), level + 1, result);
+                }
+            }
+        }
+
+        // build category list có phân cấp (hierarchy)
+        private async Task<IEnumerable<Category>> BuildHierarchyCategory()
+        {
+            // load category và category children theo cách eager loading
+            var list = await _context.Categories
+                .Include(c => c.CategoryChildren)
+                .ToListAsync();
+            
+            var cates = list
+                .Where(c => c.ParentCategory == null)
+                .ToList();
+
+            // Add No Parent into First Position.
+            List<Category> result = new List<Category>();
+            result.Add(new Category
+            {
+                Id = -1,
+                Title = "No Parent"
+            });
+
+            // xử lý tạo category phân cấp
+            int level = 0;
+            // gọi hàm thay đổi lại title theo kiểu phân cấp
+            ChangeTitle(cates, level, result);
+
+            return result;
+        }
+
+        // GET: Post/Create
+        public async Task<IActionResult> Create()
+        {
+            ViewData["CategoryId"] = new SelectList(await BuildHierarchyCategory(), "Id", "Title");
             return View();
         }
 

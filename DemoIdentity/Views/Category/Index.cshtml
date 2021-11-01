@@ -16,38 +16,45 @@
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Slug)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.ParentCategory)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slug)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentCategory.Title)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            int level = 0;
+            await RenderTable(item, level);
+        }
     </tbody>
 </table>
+@*viết razor code build title dạng phân cấp*@
+@{
+    async Task RenderTable(Category  cate, int level)
+    {
+        string prefix = string.Concat(Enumerable.Repeat("&nbsp;&nbsp;&nbsp;&nbsp;", level));
+
+        <tr>
+            <td>
+                @Html.Raw(prefix) @Html.DisplayFor(modelItem => cate.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => cate.ParentCategory.Title)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@cate.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@cate.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@cate.Id">Delete</a>
+            </td>
+        </tr>
+
+        if (cate.CategoryChildren != null && cate.CategoryChildren.Count > 0)
+        {
+            foreach (var item in cate.CategoryChildren)
+            {
+                await RenderTable(item, level + 1);
+            }
+        }
+    }
+}
