@@ -100,6 +100,13 @@ namespace DemoIdentity
                     //goptions.CallbackPath = "/dang-nhap-tu-google";
                 });
 
+            services.AddSession(config =>
+            {
+                config.Cookie.Name = "demoidentity";    // Đặt tên cho session, tên này sẽ sử dụng ở Browser (Cookie)
+                // thiết lập thời gian timeout của Session
+                config.IdleTimeout = new TimeSpan(0, 60, 0);    // 60 minutes
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();   // thêm phần config cho Razor Page
         }
@@ -116,6 +123,8 @@ namespace DemoIdentity
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
+
+            app.UseSession();       // đăng ký Middleware Session vào Pipeline6jh
 
             app.UseRouting();
 

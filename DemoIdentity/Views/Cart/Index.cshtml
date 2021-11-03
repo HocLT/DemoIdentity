@@ -1,0 +1,26 @@
+﻿@model List<DemoIdentity.Models.Product>
+@{
+    ViewData["Title"] = "Product";
+}
+
+<h1>Product List</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <h3 class="card-header">@item.Name</h3>
+                <div class="card-body" style="height: 150px;">
+                    @item.Description
+                </div>
+                <div class="card-footer">
+                    @*Price.ToString("n0"): "n0": định dạng bỏ phần lẻ*@
+                    <span class="text-muted">@(item.Price.ToString("n0")) VND</span>
+                    <a asp-route="addcart" asp-route-productid="@item.Id"
+                       class="btn btn-secondary btn-sm float-right">Add Cart</a> 
+                </div>
+            </div>
+        </div>
+    }
+</div>

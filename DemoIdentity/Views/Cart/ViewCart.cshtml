@@ -1,0 +1,81 @@
+﻿@model List<DemoIdentity.Models.CartItem>
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<h1>Cart</h1>
+
+@if (Model.Count > 0)
+{
+    int no = 1;
+    decimal total = 0;
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>SubTotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                var subTotal = item.Quantity * item.Product.Price;
+                total += subTotal;
+
+                <tr>
+                    <td>@(no++)</td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Product.Price.ToString("n0")</td>
+                    <td><input asp-for="@item.Quantity" id="@($"quantity-{item.Product.Id}")" /></td>
+                    <td>@(subTotal.ToString("n0"))</td>
+                    <td>
+                        <button class="btn btn-success update-cart-item" 
+                                data-id="@item.Product.Id"> Update</button>
+                        <a asp-route = "removecart" asp-route-productid="@item.Product.Id" class="btn btn-danger">Remove</a>
+                    </td>
+                </tr>
+                // hàng hiển thị total
+                <tr>
+                    <td colspan="4" class="text-right">Total</td>
+                    <td>@(total.ToString("n0"))</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                $('.update-cart-item').click(function (evt) {
+                    // khi click vào button => sẽ submit form, để form không submit, gọi hàm preventDefault
+                    evt.preventDefault();
+                    //let productid = $(this).attr('data-id');
+                    let productid = $(this).data('id');
+                    let quantity = $('#quantity-' + productid).val();    // đọc giá trị của textbox quantity
+                    // gửi yêu cầu ajax
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.RouteUrl("updatecart")",
+                        data: {
+                            productid: productid,
+                            quantity: quantity
+                        },
+                        success: function (result) {
+                            window.location.href = "@Url.RouteUrl("viewcart")";
+                        }
+                    });
+                });
+            });
+        </script>
+    }
+}
+else
+{
+    <p class="alert alert-danger">Cart Empty</p>
+}

@@ -12,6 +12,7 @@ namespace DemoIdentity.Data
     {
         public DbSet<Category> Categories { set; get; }
         public DbSet<Post> Posts { set; get; }
+        public DbSet<Product> Products { set; get; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -30,6 +31,14 @@ namespace DemoIdentity.Data
                     entityType.SetTableName(tableName.Substring(6));    // bỏ 6 ký tự đầu là "AspNet"
                 }
             }
+
+            // insert dữ liệu mẫu sau khi tạo table
+            builder.Entity<Product>().HasData(
+                new Product { Id = 1, Name = "Product 1", Description = "Descriptio for Product 1", Price = 10000},
+                new Product { Id = 2, Name = "Product 2", Description = "Descriptio for Product 2", Price = 16000 },
+                new Product { Id = 3, Name = "Product 3", Description = "Descriptio for Product 3", Price = 50000 },
+                new Product { Id = 4, Name = "Product 4", Description = "Descriptio for Product 4", Price = 120000 }
+                );
         }
     }
 }
